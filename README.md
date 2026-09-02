@@ -96,7 +96,7 @@ npm test
 
 ## API Specification
 
-### Endpoint: `POST /api/v1/cards/validate`
+### Endpoint: `POST /api/cards/validate`
 
 #### Request Headers
 | Header | Value |
@@ -192,17 +192,17 @@ npm test
 
 ```bash
 # Valid Card Test
-curl -X POST http://localhost:3000/api/v1/cards/validate \
+curl -X POST http://localhost:3000/api/cards/validate \
   -H "Content-Type: application/json" \
   -d '{"cardNumber": "4532015112830366"}'
 
 # Formatted Card Test (with hyphens)
-curl -X POST http://localhost:3000/api/v1/cards/validate \
+curl -X POST http://localhost:3000/api/cards/validate \
   -H "Content-Type: application/json" \
   -d '{"cardNumber": "3782-822468-31005"}'
 
 # Invalid Input Test
-curl -X POST http://localhost:3000/api/v1/cards/validate \
+curl -X POST http://localhost:3000/api/cards/validate \
   -H "Content-Type: application/json" \
   -d '{"cardNumber": ""}'
 ```

@@ -5,7 +5,7 @@ import { validateCardInputMiddleware } from '../middlewares/validate-dto.middlew
 const router = Router();
 
 /**
- * POST /api/v1/cards/validate
+ * POST /api/cards/validate
  * Body: { "cardNumber": "..." }
  */
 router.post('/validate', validateCardInputMiddleware, CardController.validateCardHandler);

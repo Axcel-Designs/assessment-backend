@@ -2,10 +2,10 @@ import request from 'supertest';
 import app from '../../src/app';
 
 describe('Card Validation API Integration Tests', () => {
-  describe('POST /api/v1/cards/validate', () => {
+  describe('POST /api/cards/validate', () => {
     it('should validate a valid Visa card number and return 200 OK', async () => {
       const response = await request(app)
-        .post('/api/v1/cards/validate')
+        .post('/api/cards/validate')
         .send({ cardNumber: '4532015112830366' });
 
       expect(response.status).toBe(200);
@@ -17,7 +17,7 @@ describe('Card Validation API Integration Tests', () => {
 
     it('should handle card numbers formatted with spaces or hyphens', async () => {
       const response = await request(app)
-        .post('/api/v1/cards/validate')
+        .post('/api/cards/validate')
         .send({ cardNumber: '3782-822463-10005' });
 
       expect(response.status).toBe(200);
@@ -29,7 +29,7 @@ describe('Card Validation API Integration Tests', () => {
 
     it('should return 200 OK with isValid: false for invalid checksum card number', async () => {
       const response = await request(app)
-        .post('/api/v1/cards/validate')
+        .post('/api/cards/validate')
         .send({ cardNumber: '4532015112830367' });
 
       expect(response.status).toBe(200);
@@ -40,7 +40,7 @@ describe('Card Validation API Integration Tests', () => {
 
     it('should support alternative field name card_number', async () => {
       const response = await request(app)
-        .post('/api/v1/cards/validate')
+        .post('/api/cards/validate')
         .send({ card_number: '4532015112830366' });
 
       expect(response.status).toBe(200);
@@ -50,7 +50,7 @@ describe('Card Validation API Integration Tests', () => {
 
     it('should return 400 Bad Request when cardNumber is missing', async () => {
       const response = await request(app)
-        .post('/api/v1/cards/validate')
+        .post('/api/cards/validate')
         .send({});
 
       expect(response.status).toBe(400);
@@ -60,7 +60,7 @@ describe('Card Validation API Integration Tests', () => {
 
     it('should return 400 Bad Request when cardNumber is not a string', async () => {
       const response = await request(app)
-        .post('/api/v1/cards/validate')
+        .post('/api/cards/validate')
         .send({ cardNumber: 1234567890123456 });
 
       expect(response.status).toBe(400);
@@ -70,7 +70,7 @@ describe('Card Validation API Integration Tests', () => {
 
     it('should return 400 Bad Request when cardNumber is empty', async () => {
       const response = await request(app)
-        .post('/api/v1/cards/validate')
+        .post('/api/cards/validate')
         .send({ cardNumber: '   ' });
 
       expect(response.status).toBe(400);

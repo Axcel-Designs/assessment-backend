@@ -7,5 +7,5 @@ const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
-  console.log(`Card Validation Endpoint available at POST http://localhost:${PORT}/api/v1/cards/validate`);
+  console.log(`Card Validation Endpoint available at POST http://localhost:${PORT}/api/cards/validate`);
 });

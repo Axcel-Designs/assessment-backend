@@ -1,6 +1,6 @@
 import express, { Application, Request, Response } from 'express';
 import cardRoutes from './routes/card.routes';
-import { errorHandlerMiddleware } from './middlewares/error-handler.middleware';
+import { errorHandler, errorHandlerMiddleware, notFound } from './middlewares/errorHandler.middleware';
 
 const app: Application = express();
 
@@ -12,12 +12,12 @@ app.get('/', (_req: Request, res: Response) => {
   res.status(200).json({
     success: true,
     message: 'Card Number Validation API is operational.',
-    documentation: '/api/v1/cards/validate'
+    documentation: '/api/cards/validate'
   });
 });
 
 // Card validation routes
-app.use('/api/v1/cards', cardRoutes);
+app.use('/api/cards', cardRoutes);
 // Alias for convenience / flexible client integration
 app.use('/api', cardRoutes);
 
@@ -34,5 +34,8 @@ app.use((_req: Request, res: Response) => {
 
 // Centralized error handling middleware
 app.use(errorHandlerMiddleware);
+app.use(notFound);
+app.use(errorHandler);
+
 
 export default app;
