@@ -1,45 +1,65 @@
 import { Request, Response, NextFunction } from 'express';
 
-export function errorHandlerMiddleware(
-  err: Error & { status?: number; type?: string },
+export class AppError extends Error {
+  public statusCode: number;
+  public code: string;
+
+  constructor(message: string, statusCode = 500, code = 'INTERNAL_SERVER_ERROR') {
+    super(message);
+    this.name = 'AppError';
+    this.statusCode = statusCode;
+    this.code = code;
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}
+
+/**
+ * 404 handler for undefined routes
+ */
+export function notFound(_req: Request, res: Response): void {
+  res.status(404).json({
+    success: false,
+    error: {
+      code: 'NOT_FOUND',
+      message: 'The requested resource or endpoint was not found.'
+    }
+  });
+}
+
+/**
+ * Global error handler middleware
+ */
+export function errorHandler(
+  err: Error & { statusCode?: number; status?: number; code?: string },
   _req: Request,
   res: Response,
   _next: NextFunction
 ): void {
-  // Handle Express JSON syntax parsing error (e.g. malformed JSON body)
-  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+  // Handle invalid JSON syntax from express.json()
+  if (err instanceof SyntaxError && 'status' in err && (err as any).status === 400 && 'body' in err) {
     res.status(400).json({
       success: false,
       error: {
-        code: 'MALFORMED_JSON',
-        message: 'Invalid JSON syntax in request body.'
+        code: 'INVALID_JSON',
+        message: 'Malformed JSON payload in request body.'
       }
     });
     return;
   }
 
-  // General internal server error fallback
-  const statusCode = err.status || 500;
+  const statusCode = err.statusCode || err.status || 500;
+  const code = err.code || (statusCode >= 500 ? 'INTERNAL_SERVER_ERROR' : 'BAD_REQUEST');
+  const message = err.message || 'An unexpected internal server error occurred.';
+
+  if (statusCode >= 500 && process.env.NODE_ENV !== 'test') {
+    console.error(err);
+  }
+
   res.status(statusCode).json({
     success: false,
     error: {
-      code: statusCode === 500 ? 'INTERNAL_SERVER_ERROR' : 'HTTP_ERROR',
-      message: err.message || 'An unexpected error occurred.'
+      code,
+      message
     }
   });
 }
-
-export function notFound(_req:Request, res:Response) {
-  return res.status(404).json({ message: "route not found" });
-}
-
-export function errorHandler(error: Error & { status?: number; type?: string }, _req:Request, res:Response, _next:NextFunction) {
-  console.error(error);
-  res.status(500).json({ 
-    success: false,
-    error: {
-      code: error.status === 500 ? 'INTERNAL_SERVER_ERROR' : 'HTTP_ERROR',
-      message:'An unexpected error occurred.' 
-    }})
-}
-
